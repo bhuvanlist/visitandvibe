@@ -1,5 +1,5 @@
 from flask import Flask, request, render_template
- import streamlit as st
+import streamlit as st
 import requests
 
 app = Flask(__name__)
