@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nearby Places Finder</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        .results {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Nearby Places Finder</h1>
+    <form id="searchForm">
+        <label for="place_name">Enter a Place Name:</label>
+        <input type="text" id="place_name" name="place_name" required>
+        <button type="submit">Search</button>
+    </form>
+    <div id="results" class="results"></div>
+    <script>
+        document.getElementById('searchForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const placeName = document.getElementById('place_name').value;
+            fetch('/search', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({ place_name: placeName })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultsDiv = document.getElementById('results');
+                if (data.error) {
+                    resultsDiv.innerHTML = `<p>${data.error}</p>`;
+                } else {
+                    let html = '<h2>Results</h2>';
+
+                    html += '<h3>Nearby Tourist Attractions:</h3><ul>';
+                    data.attractions.forEach(place => {
+                        html += `<li>${place.name} (Lat: ${place.lat}, Lon: ${place.lon})</li>`;
+                    });
+                    html += '</ul>';
+
+                    html += '<h3>Nearby Hotels:</h3><ul>';
+                    data.hotels.forEach(place => {
+                        html += `<li>${place.name} (Lat: ${place.lat}, Lon: ${place.lon})</li>`;
+                    });
+                    html += '</ul>';
+
+                    html += '<h3>Nearby Restaurants:</h3><ul>';
+                    data.restaurants.forEach(place => {
+                        html += `<li>${place.name} (Lat: ${place.lat}, Lon: ${place.lon}) | <a href="${place.link}" target="_blank">View on Map</a></li>`;
+                    });
+                    html += '</ul>';
+
+                    resultsDiv.innerHTML = html;
+                }
+            })
+            .catch(error => {
+                document.getElementById('results').innerHTML = `<p>Error: ${error.message}</p>`;
+            });
+        });
+    </script>
+</body>
+</html>
