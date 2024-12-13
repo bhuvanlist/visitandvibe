@@ -2,33 +2,36 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Results for {{ place_name }}</title>
+    <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-    <h1>Results for {{ place_name }}</h1>
+    <div class="container">
+        <h1>Results for "{{ place_name }}"</h1>
 
-    <h2>Nearby Tourist Attractions:</h2>
-    <ul>
-        {% for place in attractions %}
-        <li>{{ place.name }} (Lat: {{ place.lat }}, Lon: {{ place.lon }})</li>
-        {% endfor %}
-    </ul>
+        <h2>Attractions</h2>
+        <ul>
+            {% for attraction in attractions %}
+                <li><a href="{{ attraction.link }}" target="_blank">{{ attraction.name }}</a> (Lat: {{ attraction.lat }}, Lon: {{ attraction.lon }})</li>
+            {% endfor %}
+        </ul>
 
-    <h2>Nearby Hotels:</h2>
-    <ul>
-        {% for place in hotels %}
-        <li>{{ place.name }} (Lat: {{ place.lat }}, Lon: {{ place.lon }})</li>
-        {% endfor %}
-    </ul>
+        <h2>Hotels</h2>
+        <ul>
+            {% for hotel in hotels %}
+                <li><a href="{{ hotel.link }}" target="_blank">{{ hotel.name }}</a> (Lat: {{ hotel.lat }}, Lon: {{ hotel.lon }})</li>
+            {% endfor %}
+        </ul>
 
-    <h2>Nearby Restaurants:</h2>
-    <ul>
-        {% for place in restaurants %}
-        <li>
-            {{ place.name }} (Lat: {{ place.lat }}, Lon: {{ place.lon }}) 
-            <a href="{{ place.link }}" target="_blank">View on Map</a>
-        </li>
-        {% endfor %}
-    </ul>
+        <h2>Restaurants</h2>
+        <ul>
+            {% for restaurant in restaurants %}
+                <li><a href="{{ restaurant.link }}" target="_blank">{{ restaurant.name }}</a> (Lat: {{ restaurant.lat }}, Lon: {{ restaurant.lon }})</li>
+            {% endfor %}
+        </ul>
+
+        <a href="/">Search Again</a>
+    </div>
 </body>
 </html>
