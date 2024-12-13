@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Results for {{ place_name }}</title>
+</head>
+<body>
+    <h1>Results for {{ place_name }}</h1>
+
+    <h2>Nearby Tourist Attractions:</h2>
+    <ul>
+        {% for place in attractions %}
+        <li>{{ place.name }} (Lat: {{ place.lat }}, Lon: {{ place.lon }})</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Nearby Hotels:</h2>
+    <ul>
+        {% for place in hotels %}
+        <li>{{ place.name }} (Lat: {{ place.lat }}, Lon: {{ place.lon }})</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Nearby Restaurants:</h2>
+    <ul>
+        {% for place in restaurants %}
+        <li>
+            {{ place.name }} (Lat: {{ place.lat }}, Lon: {{ place.lon }}) 
+            <a href="{{ place.link }}" target="_blank">View on Map</a>
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
