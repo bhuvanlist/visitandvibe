@@ -2,6 +2,7 @@ from flask import Flask, request, render_template
 import streamlit as st
 import requests
 
+
 app = Flask(__name__)
 
 tourism_values = [
@@ -29,7 +30,7 @@ def get_query(location, tag_key, tag_values, radius=50000):
         node += f"""node["{tag_key}"="{tag_value}"](around:{radius},{location['lat']},{location['lon']});"""
     return f"[out:json];({node});out;"
 
-# Function to fetch nearby places using Overpass API
+
 def get_nearby_places(location, tag_key, tag_values, radius=50000, limit=100):
     query = get_query(location, tag_key, tag_values, radius)
     url = "https://overpass-api.de/api/interpreter"
@@ -61,7 +62,7 @@ def search_places(place_name):
 # Flask Routes
 @app.route('/')
 def home():
-    return "Server is running on Waitress!"
+    return render_template('index.html')
 
 @app.route('/search', methods=['POST'])
 def search():
