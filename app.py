@@ -1,7 +1,6 @@
 from flask import Flask, request, render_template
-import streamlit as st
 import requests
-
+import streamlit as st
 
 app = Flask(__name__)
 
@@ -13,30 +12,34 @@ tourism_values = [
 
 # Function to get geolocation of a place
 def get_geolocation(place_name):
-    url = "https://nominatim.openstreetmap.org/search"
-    headers = {"User-Agent": "YourAppName/1.0 (your_email@example.com)"}
-    params = {'q': place_name, 'format': 'json', 'limit': 1}
-    response = requests.get(url, headers=headers, params=params)
-
-    if response.status_code == 200 and response.json():
-        data = response.json()[0]
-        return {'lat': float(data['lat']), 'lon': float(data['lon'])}
+    try:
+        url = "https://nominatim.openstreetmap.org/search"
+        headers = {"User-Agent": "TourismApp/1.0 (contact@example.com)"}
+        params = {'q': place_name, 'format': 'json', 'limit': 1}
+        response = requests.get(url, headers=headers, params=params)
+        response.raise_for_status()
+        data = response.json()
+        if data:
+            return {'lat': float(data[0]['lat']), 'lon': float(data[0]['lon'])}
+    except Exception as e:
+        print(f"Geolocation error: {e}")
     return None
 
 # Function to generate Overpass API query
 def get_query(location, tag_key, tag_values, radius=50000):
-    node = ""
-    for tag_value in tag_values:
-        node += f"""node["{tag_key}"="{tag_value}"](around:{radius},{location['lat']},{location['lon']});"""
-    return f"[out:json];({node});out;"
+    nodes = "".join(
+        f"""node["{tag_key}"="{tag_value}"](around:{radius},{location['lat']},{location['lon']});"""
+        for tag_value in tag_values
+    )
+    return f"[out:json];({nodes});out;"
 
-
+# Fetch nearby places using Overpass API
 def get_nearby_places(location, tag_key, tag_values, radius=50000, limit=100):
-    query = get_query(location, tag_key, tag_values, radius)
-    url = "https://overpass-api.de/api/interpreter"
-    response = requests.post(url, data={'data': query})
-
-    if response.status_code == 200:
+    try:
+        query = get_query(location, tag_key, tag_values, radius)
+        url = "https://overpass-api.de/api/interpreter"
+        response = requests.post(url, data={'data': query})
+        response.raise_for_status()
         data = response.json()
         return [
             {
@@ -46,6 +49,8 @@ def get_nearby_places(location, tag_key, tag_values, radius=50000, limit=100):
                 'link': f"https://www.openstreetmap.org/node/{element['id']}"
             } for element in data.get('elements', []) if element.get('tags', {})
         ][:limit]
+    except Exception as e:
+        print(f"Overpass API error: {e}")
     return []
 
 # Main function to search for nearby places
@@ -67,9 +72,20 @@ def home():
 @app.route('/search', methods=['POST'])
 def search():
     place_name = request.form.get('place_name')
+    if not place_name:
+        return render_template("error.html", message="Place name is required!")
+
     attractions, hotels, restaurants = search_places(place_name)
-    return render_template("results.html", place_name=place_name,
-                           attractions=attractions, hotels=hotels, restaurants=restaurants)
+    if not attractions and not hotels and not restaurants:
+        return render_template("error.html", message=f"No data found for {place_name}!")
+
+    return render_template(
+        "results.html",
+        place_name=place_name,
+        attractions=attractions,
+        hotels=hotels,
+        restaurants=restaurants
+    )
 
 # Run the app
 if __name__ == '__main__':
