@@ -43,7 +43,7 @@ def get_nearby_places(location, tag_key, tag_values, radius=50000, limit=100):
         data = response.json()
         return [
             {
-                'name': element.get('tags', {}).get('name','new_location),
+                'name': element.get('tags', {}).get('name','new_location,),
                 'lat': element['lat'],
                 'lon': element['lon'],
                 'link': f"https://www.openstreetmap.org/node/{element['id']}"
