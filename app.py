@@ -7,7 +7,7 @@ app = Flask(__name__)
 tourism_values = [
     "viewpoint", "picnic_site", "camp_site", "caravan_site", "museum", "gallery",
     "castle", "monument", "ruins", "archaeological_site", "theme_park",
-    "water_park", "zoo", "aquarium"
+    "water_park", "zoo", "aquarium", "fort", "temples"
 ]
 
 # Function to get geolocation of a place
@@ -43,7 +43,7 @@ def get_nearby_places(location, tag_key, tag_values, radius=50000, limit=100):
         data = response.json()
         return [
             {
-                'name': element.get('tags', {}).get('name', 'Unknown'),
+                'name': element.get('tags', {}).get('name'),
                 'lat': element['lat'],
                 'lon': element['lon'],
                 'link': f"https://www.openstreetmap.org/node/{element['id']}"
