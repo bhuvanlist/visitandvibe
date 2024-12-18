@@ -59,7 +59,7 @@ def search_places(place_name):
     if not location:
         return None, None, None
 
-    attractions = get_nearby_places(location, "tourism", tourism_values, limit=50)
+    attractions = get_nearby_places(location, "tourism", tourism_values, limit=500)
     hotels = get_nearby_places(location, "tourism", ["hotel"], limit=10)
     restaurants = get_nearby_places(location, "amenity", ["restaurant"], limit=10)
     return attractions, hotels, restaurants
